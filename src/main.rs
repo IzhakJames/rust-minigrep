@@ -1,7 +1,8 @@
+use minigrep::search;
 use std::env;
+use std::error::Error;
 use std::fs;
 use std::process;
-use std::error::Error;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -22,12 +23,11 @@ fn main() {
         println!("An error occured by processing the search: {e}");
         process::exit(1);
     }
-    
 }
 
 struct Config {
     query: String,
-    file_path: String
+    file_path: String,
 }
 
 impl Config {
@@ -37,12 +37,16 @@ impl Config {
         }
         let query = args[1].clone();
         let file_path = args[2].clone();
-        Ok(Config {query, file_path})
+        Ok(Config { query, file_path })
     }
 }
 
-fn run(config: Config) -> Result<(), Box<dyn Error>>{
+fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let content = fs::read_to_string(config.file_path)?;
-    println!("With text:\n{content}");
+
+    for line in search(&config.query, &content) {
+        println!("{line}");
+    }
+
     Ok(())
 }
