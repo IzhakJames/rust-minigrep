@@ -12,9 +12,6 @@ fn main() {
         process::exit(1);
     });
 
-    println!("Searching for {}", config.query);
-    println!("In file {}", config.file_path);
-
     // run(config).unwrap_or_else(|err|{
     //     println!("An error occured by processing the search: {err}");
     //     process::exit(1);
