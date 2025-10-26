@@ -1,10 +1,10 @@
 use std::env;
 use std::fs;
 use std::process;
+use std::error::Error;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    // dbg!(args);
 
     let config = Config::build(&args).unwrap_or_else(|error| {
         println!("Problem parsing arguments: {error}");
@@ -14,9 +14,15 @@ fn main() {
     println!("Searching for {}", config.query);
     println!("In file {}", config.file_path);
 
-    let content = fs::read_to_string(config.file_path).expect("Something went wrong with reading file");
-
-    println!("With text:\n{content}")
+    // run(config).unwrap_or_else(|err|{
+    //     println!("An error occured by processing the search: {err}");
+    //     process::exit(1);
+    // });
+    if let Err(e) = run(config) {
+        println!("An error occured by processing the search: {e}");
+        process::exit(1);
+    }
+    
 }
 
 struct Config {
@@ -33,4 +39,10 @@ impl Config {
         let file_path = args[2].clone();
         Ok(Config {query, file_path})
     }
+}
+
+fn run(config: Config) -> Result<(), Box<dyn Error>>{
+    let content = fs::read_to_string(config.file_path)?;
+    println!("With text:\n{content}");
+    Ok(())
 }
